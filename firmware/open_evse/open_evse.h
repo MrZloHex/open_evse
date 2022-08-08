@@ -52,9 +52,9 @@ typedef unsigned long time_t;
 //#include "Language_norwegian.h"
 
 //-- begin features
-
+#define OPENEVSE_2
+#define OCPP
 #ifndef PLATFORMIO
-//#define OCPP
 // support V6 hardware
 #define OEV6
 #ifdef OEV6
@@ -161,14 +161,14 @@ extern AutoCurrentCapacityController g_ACCController;
 
 // If you loop a wire from the third GFI pin through the CT a few times and then to ground,
 // enable this. ADVPWR must also be defined.
-#define GFI_SELFTEST
+// #define GFI_SELFTEST
 
 // behavior specified by UL
 // 1) if enabled, POST failure will cause a hard fault until power cycled.
 //    disabled, will retry POST continuously until it passes
 // 2) if enabled, any a fault occurs immediately after charge is initiated,
 //    hard fault until power cycled. Otherwise, do the standard delay/retry sequence
-#define UL_COMPLIANT
+// #define UL_COMPLIANT
 
 #ifdef UL_COMPLIANT
 #define ADVPWR
@@ -217,7 +217,7 @@ extern AutoCurrentCapacityController g_ACCController;
 #endif //AMMETER
 
 //Adafruit RGBLCD (MCP23017) - can have RGB or monochrome backlight
-#define RGBLCD
+// #define RGBLCD
 
 //select default LCD backlight mode. can be overridden w/CLI/RAPI
 #define BKL_TYPE_MONO 0
@@ -226,12 +226,12 @@ extern AutoCurrentCapacityController g_ACCController;
 //#define DEFAULT_LCD_BKL_TYPE BKL_TYPE_MONO
 
 // Adafruit LCD backpack in I2C mode (MCP23008)
-//#define I2CLCD
+// #define I2CLCD
 
 // Support PCF8574* based I2C backpack using F. Malpartida's library
 // https://bitbucket.org/fmalpartida/new-liquidcrystal/downloads
 // *requires* I2CLCD enabled and RGBLCD disabled
-//#define I2CLCD_PCF8574
+#define I2CLCD_PCF8574
 #ifdef I2CLCD_PCF8574
 #define I2CLCD
 #undef RGBLCD
@@ -435,24 +435,26 @@ extern AutoCurrentCapacityController g_ACCController;
 
 //J1772EVSEController
 
-#define CURRENT_PIN 0 // analog current reading pin ADCx
+#define CURRENT_PIN 6 // analog current reading pin ADCx
 #define PILOT_PIN 1 // analog pilot voltage reading pin ADCx
 #define PP_PIN 2 // PP_READ - ADC2
+#define VOLTMETER
 #ifdef VOLTMETER
 // N.B. Note, ADC2 is already used as PP_PIN so beware of potential clashes
 // voltmeter pin is ADC2 on OPENEVSE_2
-#define VOLTMETER_PIN 2 // analog AC Line voltage voltmeter pin ADCx
+#define VOLTMETER_PIN 0 // analog AC Line voltage voltmeter pin ADCx
 #endif // VOLTMETER
+
 #ifdef OPENEVSE_2
 // This pin must match the last write to CHARGING_PIN, modulo a delay. If
 // it is low when CHARGING_PIN is high, that's a missing ground.
 // If it's high when CHARGING_PIN is low, that's a stuck relay.
 // Auto L1/L2 is done with the voltmeter.
 #define ACLINE1_REG &PIND // OpenEVSE II has only one AC test pin.
-#define ACLINE1_IDX 3
+#define ACLINE1_IDX 4
 
-#define CHARGING_REG &PIND // OpenEVSE II has just one relay pin.
-#define CHARGING_IDX 7 // OpenEVSE II has just one relay pin.
+#define CHARGING_REG &PINC // OpenEVSE II has just one relay pin.
+#define CHARGING_IDX 3 // OpenEVSE II has just one relay pin.
 #else // !OPENEVSE_2
 
  // TEST PIN 1 for L1/L2, ground and stuck relay
@@ -486,7 +488,7 @@ extern AutoCurrentCapacityController g_ACCController;
 // N.B. if PAFC_PWM is enabled, then pilot pin can be PB1 or PB2
 // if using fast PWM (PAFC_PWM disabled) pilot pin *MUST* be PB2
 #define PILOT_REG &PINB
-#define PILOT_IDX 2
+#define PILOT_IDX 1
 
 #ifdef MENNEKES_LOCK
 // requires external 12V H-bridge driver such as Polulu 1451
@@ -576,8 +578,8 @@ extern AutoCurrentCapacityController g_ACCController;
 
 
 // V6 has PD7 tied to ground
-#define V6_ID_REG D
-#define V6_ID_IDX 7
+// #define V6_ID_REG D
+// #define V6_ID_IDX 7
 
 #ifdef GFI
 #define GFI_INTERRUPT 0 // interrupt number 0 = PD2, 1 = PD3
@@ -585,20 +587,21 @@ extern AutoCurrentCapacityController g_ACCController;
 #define GFI_REG &PIND
 #define GFI_IDX 2
 
+#define GFI_SELFTEST
 #ifdef GFI_SELFTEST
 // pin is supposed to be wrapped around the GFI CT 5+ times
 #define GFITEST_REG &PIND
-#define GFITEST_IDX 6
+#define GFITEST_IDX 5
 // V6 GFI test pin PB0
-#define V6_GFITEST_REG &PINB
-#define V6_GFITEST_IDX 0
+// #define V6_GFITEST_REG &PINB
+// #define V6_GFITEST_IDX 0
 
 
 
 #define GFI_TEST_CYCLES 60
 // GFI pulse should be 50% duty cycle
-#define GFI_PULSE_ON_US 8333 // 1/2 of roughly 60 Hz.
-#define GFI_PULSE_OFF_US 8334 // 1/2 of roughly 60 Hz.
+#define GFI_PULSE_ON_US 16000 // 1/2 of roughly 60 Hz.
+#define GFI_PULSE_OFF_US 16000 // 1/2 of roughly 60 Hz.
 #endif
 #endif // GFI
 

@@ -1,0 +1,23 @@
+#include <Arduino.h>
+
+void
+setup()
+{
+	pinMode(A0, INPUT);
+	Serial.begin(9600);
+	Serial.println("HELLO");
+}
+
+void
+loop()
+{
+	// uint16_t value = 0;
+	// for (uint8_t i = 0; i < 100; ++i)
+	// {
+	// 	value += analogRead(A0);
+	// }
+	// double average_value = (double)(value / 100.0);
+	// Serial.println(average_value);
+	Serial.println(analogRead(A0));
+	delay(500);
+}

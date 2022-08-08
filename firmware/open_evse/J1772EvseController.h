@@ -360,7 +360,7 @@ public:
   void SaveSettings();
 #ifdef ADVPWR
   uint8_t GndChkEnabled() { 
-    return (m_wFlags & ECF_GND_CHK_DISABLED) ? 0 : 1;
+    return 0;
   }
   void EnableGndChk(uint8_t tf);
   void EnableStuckRelayChk(uint8_t tf);

@@ -1,0 +1,68 @@
+//
+// !!! WARNING !!! AUTO-GENERATED FILE!
+// PLEASE DO NOT MODIFY IT AND USE "platformio.ini":
+// https://docs.platformio.org/page/projectconf/section_env_build.html#build-flags
+//
+{
+    "configurations": [
+        {
+            "name": "PlatformIO",
+            "includePath": [
+                "/home/zs/from_github/open_evse/include",
+                "/home/zs/from_github/open_evse/firmware/open_evse",
+                "/home/zs/.platformio/packages/framework-arduinoavr/cores/arduino",
+                "/home/zs/.platformio/packages/framework-arduinoavr/variants/standard",
+                "/home/zs/.platformio/packages/framework-arduinoavr/libraries/__cores__/arduino/EEPROM/src",
+                "/home/zs/.platformio/packages/framework-arduinoavr/libraries/__cores__/arduino/HID/src",
+                "/home/zs/.platformio/packages/framework-arduinoavr/libraries/__cores__/arduino/SPI/src",
+                "/home/zs/.platformio/packages/framework-arduinoavr/libraries/__cores__/arduino/SoftwareSerial/src",
+                "/home/zs/.platformio/packages/framework-arduinoavr/libraries/__cores__/arduino/Wire/src",
+                ""
+            ],
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true,
+                "path": [
+                    "/home/zs/from_github/open_evse/include",
+                    "/home/zs/from_github/open_evse/firmware/open_evse",
+                    "/home/zs/.platformio/packages/framework-arduinoavr/cores/arduino",
+                    "/home/zs/.platformio/packages/framework-arduinoavr/variants/standard",
+                    "/home/zs/.platformio/packages/framework-arduinoavr/libraries/__cores__/arduino/EEPROM/src",
+                    "/home/zs/.platformio/packages/framework-arduinoavr/libraries/__cores__/arduino/HID/src",
+                    "/home/zs/.platformio/packages/framework-arduinoavr/libraries/__cores__/arduino/SPI/src",
+                    "/home/zs/.platformio/packages/framework-arduinoavr/libraries/__cores__/arduino/SoftwareSerial/src",
+                    "/home/zs/.platformio/packages/framework-arduinoavr/libraries/__cores__/arduino/Wire/src",
+                    ""
+                ]
+            },
+            "defines": [
+                "PLATFORMIO=60103",
+                "ARDUINO_ARCH_AVR",
+                "AVR_OPENEVSE",
+                "F_CPU=16000000L",
+                "ARDUINO_ARCH_AVR",
+                "ARDUINO=10805",
+                "RELAY_PWM",
+                "AUTOSVCLEVEL",
+                "SHOW_DISABLED_TESTS",
+                "AMMETER",
+                "RAPI",
+                "RAPI_SERIAL",
+                "RAPI_WF",
+                "RAPI_BTN",
+                "TIME_LIMIT",
+                "CHARGE_LIMIT",
+                "MENNEKES_LOCK",
+                "__AVR_ATmega328P__",
+                ""
+            ],
+            "cStandard": "c11",
+            "cppStandard": "c++11",
+            "compilerPath": "/home/zs/.platformio/packages/toolchain-atmelavr@1.50400.190710/bin/avr-gcc",
+            "compilerArgs": [
+                "-mmcu=atmega328p",
+                ""
+            ]
+        }
+    ],
+    "version": 4
+}
