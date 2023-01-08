@@ -2504,6 +2504,7 @@ void setup()
 #ifdef PP_AUTO_AMPACITY
   g_EvseController.SetStateTransitionReqFunc(&StateTransitionReqFunc);
 #endif //PP_AUTO_AMPACITY
+  g_EvseController.EnableGndChk(0);
 
   EvseReset();
 

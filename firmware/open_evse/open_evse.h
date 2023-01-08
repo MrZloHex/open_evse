@@ -62,9 +62,9 @@ typedef unsigned long time_t;
 //-- begin features
 
 #ifndef PLATFORMIO
-//#define OCPP
+#define OCPP
 // support V6 hardware
-#define OEV6
+// #define OEV6
 #ifdef OEV6
 #define INVERT_V6_DETECTION // DO NOT USE: ONLY FOR lincomatic's BETA V6 board
 #define RELAY_PWM
@@ -96,7 +96,7 @@ typedef unsigned long time_t;
 // defining AUTH_LOCK enables locking functionality
 // AUTH_LOCK = 1 -> default to locked, automatically lock whenever transition to state A
 // AUTH_LOCK = 0 -> only locks when RAPI command sent to lock
-//#define AUTH_LOCK 1
+#define AUTH_LOCK 1
 
 // serial remote api
 #define RAPI
@@ -105,22 +105,22 @@ typedef unsigned long time_t;
 #define RAPI_SERIAL
 
 // RAPI $WF support
-#define RAPI_WF
+// #define RAPI_WF
 
 // RAPI $AN support
-#define RAPI_BTN
+// #define RAPI_BTN
 
 // RAPI over I2C
 //#define RAPI_I2C
 
 // enable sending of RAPI commands
-//#define RAPI_SENDER
+#define RAPI_SENDER
 
 // EVSE must call state transition function for permission to change states
 //#define STATE_TRANSITION_REQ_FUNC
 
 // auto detect ampacity by PP pin resistor
-// #define PP_AUTO_AMPACITY
+#define PP_AUTO_AMPACITY
 
 // charge for a specified amount of time and then stop
 #define TIME_LIMIT
@@ -256,15 +256,15 @@ extern AutoCurrentCapacityController g_ACCController;
 // How to use 1-button menu
 // Long press activates menu
 // When within menus, short press cycles menu items, long press selects and exits current submenu
-#define BTN_MENU
+// #define BTN_MENU
 
 // take out basic setup stuff that the user really shouldn't be changing,
 // which can be set via RAPI/WiFi module.. reclaims a lot of code space
-#define NOSETUP_MENU
+// #define NOSETUP_MENU
 
 // When not in menus, short press instantly stops the EVSE - another short press resumes.  Long press activates menus
 // also allows menus to be manipulated even when in State B/C
-#define BTN_ENABLE_TOGGLE
+// #define BTN_ENABLE_TOGGLE
 
 #ifdef BTN_MENU
 // use Adafruit RGB LCD select button
@@ -275,7 +275,7 @@ extern AutoCurrentCapacityController g_ACCController;
 
 // Option for RTC and DelayTime
 // REQUIRES HARDWARE RTC: DS1307 or DS3231 connected via I2C
-#define RTC // enable RTC & timer functions
+// #define RTC // enable RTC & timer functions
 
 #ifdef RTC
 // Option for Delay Timer - GoldServe
@@ -322,6 +322,8 @@ extern AutoCurrentCapacityController g_ACCController;
 //#define AUTH_LOCK_IDX 2
 #endif // AUTH_LOCK
 
+#define AUTH_LOCK 0
+#undef AUTH_LOCK_REG
 
 
 // for stability testing - shorter timeout/higher retry count
@@ -452,7 +454,7 @@ extern AutoCurrentCapacityController g_ACCController;
 #define MAX_CURRENT_CAPACITY_L1 16 // J1772 Max for L1 on a 20A circuit = 16, 15A circuit = 12
 #endif
 #ifndef MAX_CURRENT_CAPACITY_L2
-#define MAX_CURRENT_CAPACITY_L2 80 // J1772 Max for L2 = 80
+#define MAX_CURRENT_CAPACITY_L2 30 // J1772 Max for L2 = 80
 #endif
 
 //J1772EVSEController
@@ -479,7 +481,7 @@ extern AutoCurrentCapacityController g_ACCController;
 
  // TEST PIN 1 for L1/L2, ground and stuck relay
 #define ACLINE1_REG &PIND
-#define ACLINE1_IDX 3
+#define ACLINE1_IDX 4
  // TEST PIN 2 for L1/L2, ground and stuck relay
 #define ACLINE2_REG &PIND
 #define ACLINE2_IDX 4
@@ -488,8 +490,8 @@ extern AutoCurrentCapacityController g_ACCController;
 #define V6_CHARGING_PIN2 6
 
 // digital Relay trigger pin
-#define CHARGING_REG &PINB
-#define CHARGING_IDX 0
+#define CHARGING_REG &PIND
+#define CHARGING_IDX 6
 // digital Relay trigger pin for second relay
 #define CHARGING2_REG &PIND
 #define CHARGING2_IDX 7
@@ -508,7 +510,7 @@ extern AutoCurrentCapacityController g_ACCController;
 // N.B. if PAFC_PWM is enabled, then pilot pin can be PB1 or PB2
 // if using fast PWM (PAFC_PWM disabled) pilot pin *MUST* be PB2
 #define PILOT_REG &PINB
-#define PILOT_IDX 2
+#define PILOT_IDX 1
 
 #ifdef MENNEKES_LOCK
 // requires external 12V H-bridge driver such as Polulu 1451
@@ -610,7 +612,7 @@ extern AutoCurrentCapacityController g_ACCController;
 #ifdef GFI_SELFTEST
 // pin is supposed to be wrapped around the GFI CT 5+ times
 #define GFITEST_REG &PIND
-#define GFITEST_IDX 6
+#define GFITEST_IDX 5
 // V6 GFI test pin PB0
 #define V6_GFITEST_REG &PINB
 #define V6_GFITEST_IDX 0
