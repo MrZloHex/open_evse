@@ -57,51 +57,14 @@ static inline unsigned long ulong_sqrt(unsigned long in)
 
 void J1772EVSEController::readAmmeter()
 {
-  WDT_RESET();
-
-  unsigned long sum = 0;
-  uint8_t zero_crossings = 0;
-  unsigned long last_zero_crossing_time = 0, now_ms;
-  uint8_t is_first_sample = 1;
-  uint16_t last_sample;
-  unsigned int sample_count = 0;
-  for(unsigned long start = millis(); ((now_ms = millis()) - start) < CURRENT_SAMPLE_INTERVAL; ) {
+  unsigned int peak = 0;
+  for(unsigned long start = millis(); (millis() - start) < CURRENT_SAMPLE_INTERVAL; ) {
     // the A/d is 0 to 1023.
-    uint16_t sample = adcCurrent.read();
-    // If this isn't the first sample, and if the sign of the value differs from the
-    // sign of the previous value, then count that as a zero crossing.
-    if (!is_first_sample && ((last_sample > 512) != (sample > 512))) {
-      // Once we've seen a zero crossing, don't look for one for a little bit.
-      // It's possible that a little noise near zero could cause a two-sample
-      // inversion.
-      if ((now_ms - last_zero_crossing_time) > CURRENT_ZERO_DEBOUNCE_INTERVAL) {
-        zero_crossings++;
-        last_zero_crossing_time = now_ms;
-      }
-    }
-    is_first_sample = 0;
-    last_sample = sample;
-    switch(zero_crossings) {
-    case 0:
-      continue; // Still waiting to start sampling
-    case 1:
-    case 2:
-      // Gather the sum-of-the-squares and count how many samples we've collected.
-      sum += (unsigned long)(((long)sample - 512) * ((long)sample - 512));
-      sample_count++;
-      continue;
-    case 3:
-      // The answer is the square root of the mean of the squares.
-      // But additionally, that value must be scaled to a real current value.
-      // we will do that elsewhere
-      m_AmmeterReading = ulong_sqrt(sum / sample_count);
-      return;
-    }
+    uint16_t val = adcCurrent.read();
+    if (val > peak) peak = val;
   }
   // ran out of time. Assume that it's simply not oscillating any.
-  m_AmmeterReading = 0;
-
-  WDT_RESET();
+  m_AmmeterReading = (uint32_t)peak;
 }
 
 #define MA_PTS 32 // # points in moving average MUST BE power of 2
@@ -725,12 +688,12 @@ uint8_t J1772EVSEController::doPost()
       // save state with Relay 1 on 
 #ifdef OEV6
       if (isV6()) {
-	digitalWrite(V6_CHARGING_PIN,HIGH);
+	      digitalWrite(V6_CHARGING_PIN,HIGH);
       }
       else { // !V6
 #endif // OEV6
 #ifdef CHARGING_REG
-	pinCharging.write(1);
+	      pinCharging.write(1);
 #endif
 #ifdef OEV6
       }
@@ -744,12 +707,12 @@ uint8_t J1772EVSEController::doPost()
 
 #ifdef OEV6
       if (isV6()) {
-	digitalWrite(V6_CHARGING_PIN,LOW);
+	      digitalWrite(V6_CHARGING_PIN,LOW);
       }
       else { // !V6
 #endif // OEV6
 #ifdef CHARGING_REG
-	pinCharging.write(0);
+	      pinCharging.write(0);
 #endif
 #ifdef OEV6
       }
@@ -763,7 +726,7 @@ uint8_t J1772EVSEController::doPost()
       // save state for Relay 2 on
 #ifdef OEV6
       if (isV6()) {
-	digitalWrite(V6_CHARGING_PIN2,HIGH);
+	      digitalWrite(V6_CHARGING_PIN2,HIGH);
       }
       else { // !V6
 #endif // OEV6
@@ -796,42 +759,39 @@ uint8_t J1772EVSEController::doPost()
       // valid svcState is L1 - one hot, L2 both hot, OG - open ground both off, SR - stuck relay when shld be off
       //
       if (RelayOff == none) { // relay not stuck on when off
-	switch ( Relay1 ) {
-	case ( both ): //
-	  if ( Relay2 == none ) svcState = L2;
-	  if (StuckRelayChkEnabled()) {
-	    if ( Relay2 != none ) svcState = SR;
-	  }
-	  break;
-	case ( none ): //
-	  if (GndChkEnabled()) {
-	    if ( Relay2 == none ) svcState = OG;
-	  }
-	  if ( Relay2 == both ) svcState = L2;
-	  if ( Relay2 == L1 || Relay2 == L2 ) svcState = L1;
-	  break;
-	case ( L1on ): // L1 or L2
-	case ( L2on ):
-	  if (StuckRelayChkEnabled()) {
-	    if ( Relay2 != none ) svcState = SR;
-	  }
-	if ( Relay2 == none ) svcState = L1;
-	if ( (Relay1 == L1on) && (Relay2 == L2on)) svcState = L2;
-	if ( (Relay1 == L2on) && (Relay2 == L1on)) svcState = L2;
-	break;
-	} // end switch
+	      switch ( Relay1 ) {
+	      case ( both ): //
+	        if ( Relay2 == none ) svcState = L2;
+	        if (StuckRelayChkEnabled()) {
+	          if ( Relay2 != none ) svcState = SR;
+	        }
+	        break;
+	      case ( none ): //
+	        if ( Relay2 == both ) svcState = L2;
+	        if ( Relay2 == L1 || Relay2 == L2 ) svcState = L1;
+	        break;
+	      case ( L1on ): // L1 or L2
+	      case ( L2on ):
+	        if (StuckRelayChkEnabled()) {
+	          if ( Relay2 != none ) svcState = SR;
+	        }
+	      if ( Relay2 == none ) svcState = L1;
+	      if ( (Relay1 == L1on) && (Relay2 == L2on)) svcState = L2;
+	      if ( (Relay1 == L2on) && (Relay2 == L1on)) svcState = L2;
+	      break;
+	      } // end switch
       }
       else { // Relay stuck on
-	if (StuckRelayChkEnabled()) {
-	  svcState = SR;
-	}
+	      if (StuckRelayChkEnabled()) {
+	        svcState = SR;
+	      }
       }
 #ifdef SERDBG
       if (SerDbgEnabled()) {
-	Serial.print("RelayOff: ");Serial.println((int)RelayOff);
-	Serial.print("Relay1: ");Serial.println((int)Relay1);
-	Serial.print("Relay2: ");Serial.println((int)Relay2);
-	Serial.print("SvcState: ");Serial.println((int)svcState);
+	      Serial.print("RelayOff: ");Serial.println((int)RelayOff);
+	      Serial.print("Relay1: ");Serial.println((int)Relay1);
+	      Serial.print("Relay2: ");Serial.println((int)Relay2);
+	      Serial.print("SvcState: ");Serial.println((int)svcState);
       }
 #endif //#ifdef SERDBG
 
@@ -1175,36 +1135,43 @@ void J1772EVSEController::Init()
 
 }
 
-void J1772EVSEController::ReadPilot(uint16_t *plow,uint16_t *phigh)
+void
+J1772EVSEController::ReadPilot(uint16_t *plow,uint16_t *phigh)
 {
   uint16_t pl = 1023;
   uint16_t ph = 0;
 
   // 1x = 114us 20x = 2.3ms 100x = 11.3ms
-  for (int i=0;i < PILOT_LOOP_CNT;i++) {
+  for (int i=0;i < PILOT_LOOP_CNT;i++)
+  {
     uint16_t reading = adcPilot.read();  // measures pilot voltage
     
-    if (reading > ph) {
+    if (reading > ph)
+    {
       ph = reading;
     }
-    else if (reading < pl) {
+    else if (reading < pl)
+    {
       pl = reading;
     }
   }
 
-  if (m_Pilot.GetState() != PILOT_STATE_N12) {
+  if (m_Pilot.GetState() != PILOT_STATE_N12)
+  {
     // update prev state
     if (EvConnected()) SetEvConnectedPrev();
     else ClrEvConnectedPrev();
 
     // can determine connected state only if not -12VDC
-    if (ph >= m_ThreshData.m_ThreshAB) {
+    if (ph >= m_ThreshData.m_ThreshAB)
+    {
       ClrEvConnected();
 #ifdef MENNEKES_LOCK
       if (!MennekesIsManual()) m_MennekesLock.Unlock(0);
 #endif // MENNEKES_LOCK
     }
-    else {
+    else
+    {
       SetEvConnected();
 #ifdef MENNEKES_LOCK
       if (!MennekesIsManual()) m_MennekesLock.Lock(0);
@@ -1421,36 +1388,36 @@ void J1772EVSEController::Update(uint8_t forcetransition)
 
     if (prevevsestate != EVSE_STATE_GFCI_FAULT) { // state transition
       if (((uint8_t)(m_GfiTripCnt+1)) < 254) {
-	m_GfiTripCnt++;
-	eeprom_write_byte((uint8_t*)EOFS_GFI_TRIP_CNT,m_GfiTripCnt);
+	      m_GfiTripCnt++;
+	      eeprom_write_byte((uint8_t*)EOFS_GFI_TRIP_CNT,m_GfiTripCnt);
       }
       m_GfiRetryCnt = 0;
       m_GfiFaultStartMs = curms;
     }
     else { // was already in GFI fault
       if (!EvConnected()) {
-	// EV disconnected - cancel fault
-	m_EvseState = EVSE_STATE_UNKNOWN;
-	m_Gfi.Reset();
-	return;
+  	    // EV disconnected - cancel fault
+  	    m_EvseState = EVSE_STATE_UNKNOWN;
+    	  m_Gfi.Reset();
+  	    return;
       }
 
-      if ((curms - m_GfiFaultStartMs) >= GFI_TIMEOUT) {
-#ifdef FT_GFI_RETRY
-	g_OBD.LcdMsg("Reset","GFI");
-	delay(250);
-#endif // FT_GFI_RETRY
-	m_GfiRetryCnt++;
+//       if ((curms - m_GfiFaultStartMs) >= GFI_TIMEOUT) {
+// #ifdef FT_GFI_RETRY
+//       	g_OBD.LcdMsg("Reset","GFI");
+//       	delay(250);
+// #endif // FT_GFI_RETRY
+//   	    m_GfiRetryCnt++;
 	
-	if ((GFI_RETRY_COUNT != 255) && (m_GfiRetryCnt > GFI_RETRY_COUNT)) {
-	  HardFault(1);
-	  return;
-	}
-	else {
-	  m_Gfi.Reset();
-	  m_GfiFaultStartMs = 0;
-	}
-      }
+//   	    if ((GFI_RETRY_COUNT != 255) && (m_GfiRetryCnt > GFI_RETRY_COUNT)) {
+//   	      HardFault(1);
+//       	  return;
+//       	}
+//       	else {
+//       	  m_Gfi.Reset();
+//       	  m_GfiFaultStartMs = 0;
+//       	}
+//       }
     }
 
     nofault = 0;
@@ -1680,9 +1647,10 @@ if (TempChkEnabled()) {
       if (GfiSelfTestEnabled() && m_Gfi.SelfTest()) {
        // GFI test failed - hard fault
         m_EvseState = EVSE_STATE_GFI_TEST_FAILED;
-	m_Pilot.SetState(PILOT_STATE_P12);
-	HardFault(1);
-	return;
+	      m_Pilot.SetState(PILOT_STATE_P12);
+        Serial.println("HARD FAULT: 1688");
+	      HardFault(1);
+      	return;
       }
 #endif // UL_GFI_SELFTEST
 
@@ -1704,6 +1672,9 @@ if (TempChkEnabled()) {
       // vent required not supported
       chargingOff(); // turn off charging current
       m_Pilot.SetState(PILOT_STATE_P12);
+      #ifdef DEBUG
+      Serial.println("HARD FAULT: 1712");
+      #endif
       HardFault(1);
     }
     else if (m_EvseState == EVSE_STATE_GFCI_FAULT) {
@@ -1730,6 +1701,9 @@ if (TempChkEnabled()) {
       // and keep checking
       m_Pilot.SetPWM(m_CurrentCapacity);
       m_Pilot.SetState(PILOT_STATE_P12);
+      #ifdef DEBUG
+      Serial.println("HARD FAULT: 1739");
+      #endif
       HardFault(1);
     }
     else if (m_EvseState == EVSE_STATE_NO_GROUND) {
@@ -1743,6 +1717,7 @@ if (TempChkEnabled()) {
 #ifdef UL_COMPLIANT
       // per discussion w/ UL Fred Reyes 20150217
       // always hard fault stuck relay
+      Serial.println("HARD FAULT: 1753");
       HardFault(0);
 #endif // UL_COMPLIANT
     }
@@ -1781,6 +1756,7 @@ if (TempChkEnabled()) {
   if (!nofault && (prevevsestate == EVSE_STATE_C)) {
     // if fault happens immediately (within 2 sec) after charging starts, hard fault
     if ((curms - m_ChargeOnTimeMS) <= 2000) {
+      Serial.println("HARD FAULT: 1792");
       HardFault(1);
       return;
     }
@@ -1801,7 +1777,7 @@ if (TempChkEnabled()) {
     
 #ifndef FAKE_CHARGING_CURRENT
     readAmmeter();
-    uint32_t ma = MovingAverage(m_AmmeterReading);
+    uint32_t ma = m_AmmeterReading;
     if (ma != 0xffffffff) {
       m_ChargingCurrent = ma * m_CurrentScaleFactor - m_AmmeterCurrentOffset;  // subtract it
       if (m_ChargingCurrent < 0) {
@@ -1831,6 +1807,9 @@ if (TempChkEnabled()) {
 	  chargingOff(); // open the EVSE relays hopefully the EV has already discon
 
 	  // spin until EV is disconnected
+      #ifdef DEBUG
+    Serial.println("HARD FAULT: 1843");
+    #endif
 	  HardFault(1);
 	  
 	  m_OverCurrentStartMs = 0; // clear overcurrent

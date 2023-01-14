@@ -33,6 +33,7 @@ void Gfi::Init(uint8_t v6)
   pin.init(GFI_REG,GFI_IDX,DigitalPin::INP);
   // GFI triggers on rising edge
   attachInterrupt(GFI_INTERRUPT,gfi_isr,FALLING);
+  attachInterrupt(GFI_INTERRUPT,gfi_isr,FALLING);
 
 #ifdef GFI_SELFTEST
   volatile uint8_t *reg = GFITEST_REG;
@@ -61,6 +62,7 @@ void Gfi::Reset()
 #endif // GFI_SELFTEST
 
   if (!pin.read()) m_GfiFault = 1; // if interrupt pin is high, set fault
+  if (!pin.read()) m_GfiFault = 1; // if interrupt pin is high, set fault
   else m_GfiFault = 0;
 }
 
@@ -68,17 +70,28 @@ void Gfi::Reset()
 
 uint8_t Gfi::SelfTest()
 {
+  #ifdef DEBUG
+  Serial.print("GFI SELFTEST: ");
+  #endif
   int i;
   // wait for GFI pin to clear
   for (i=0;i < 20;i++) {
     WDT_RESET();
     if (pin.read()) break;
+    if (pin.read()) break;
     delay(50);
   }
-  if (i == 20) return 2;
+  if (i == 20)
+  {
+  #ifdef DEBUG
+    Serial.println(2);
+  #endif
+    return 2;
+  }
 
   testInProgress = 1;
   testSuccess = 0;
+  for(int i=0; i < GFI_TEST_CYCLES; i++) {
   for(int i=0; i < GFI_TEST_CYCLES; i++) {
     pinTest.write(1);
     delayMicroseconds(GFI_PULSE_ON_US);
@@ -92,7 +105,13 @@ uint8_t Gfi::SelfTest()
     if (!pin.read()) break;
     delay(50);
   }
-  if (i == 40) return 3;
+  if (i == 40)
+  {
+  #ifdef DEBUG
+    Serial.println(3);
+  #endif
+    return 3;
+  }
 
 #ifndef OPENEVSE_2
   // sometimes getting spurious GFI faults when testing just before closing
