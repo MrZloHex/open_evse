@@ -169,10 +169,10 @@ extern AutoCurrentCapacityController g_ACCController;
 // This is just a wild guess
 // #define VOLTMETER_SCALE_FACTOR (266)     // original guess
 //#define DEFAULT_VOLT_SCALE_FACTOR (262)        // calibrated for Craig K OpenEVSE II build
-#define DEFAULT_VOLT_SCALE_FACTOR (274)        // calibrated for lincomatic's OEII
+#define DEFAULT_VOLT_SCALE_FACTOR (539)        // calibrated for lincomatic's OEII
 // #define VOLTMETER_OFFSET_FACTOR (40000)  // original guess
 //#define DEFAULT_VOLT_OFFSET (46800)     // calibrated for Craig K OpenEVSE II build
-#define DEFAULT_VOLT_OFFSET (1221)     // calibrated for lincomatic's OEII
+#define DEFAULT_VOLT_OFFSET (3481)     // calibrated for lincomatic's OEII
 
 // GFI support
 #define GFI
@@ -476,9 +476,9 @@ extern AutoCurrentCapacityController g_ACCController;
 
 //J1772EVSEController
 
-#define CURRENT_PIN 2 // analog current reading pin ADCx
+#define CURRENT_PIN 3 // analog current reading pin ADCx
 #define PILOT_PIN 1 // analog pilot voltage reading pin ADCx
-#define PP_PIN 3 // PP_READ - ADC2
+#define PP_PIN 2 // PP_READ - ADC2
 #ifdef VOLTMETER
 // N.B. Note, ADC2 is already used as PP_PIN so beware of potential clashes
 // voltmeter pin is ADC2 on OPENEVSE_2
