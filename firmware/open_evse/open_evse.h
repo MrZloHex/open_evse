@@ -164,15 +164,9 @@ extern AutoCurrentCapacityController g_ACCController;
 
 // If the AC voltage is > 150,000 mV, then it's L2. Else, L1.
 #define VOLTMETER
-// 35 ms is just a bit longer than 1.5 cycles at 50 Hz
 #define VOLTMETER_POLL_INTERVAL (35)
-// This is just a wild guess
-// #define VOLTMETER_SCALE_FACTOR (266)     // original guess
-//#define DEFAULT_VOLT_SCALE_FACTOR (262)        // calibrated for Craig K OpenEVSE II build
-#define DEFAULT_VOLT_SCALE_FACTOR (539)        // calibrated for lincomatic's OEII
-// #define VOLTMETER_OFFSET_FACTOR (40000)  // original guess
-//#define DEFAULT_VOLT_OFFSET (46800)     // calibrated for Craig K OpenEVSE II build
-#define DEFAULT_VOLT_OFFSET (3481)     // calibrated for lincomatic's OEII
+#define DEFAULT_VOLT_SCALE_FACTOR (539)   // Calibrated for PROTO-V1R3 
+#define DEFAULT_VOLT_OFFSET (3481)        // Calibrated for PROTO-V1R3
 
 // GFI support
 #define GFI
@@ -731,14 +725,14 @@ extern AutoCurrentCapacityController g_ACCController;
 #ifdef OPENEVSE_2
 #define DEFAULT_CURRENT_SCALE_FACTOR 186   // OpenEVSE II with a 27 Ohm burden resistor, after a 2-point calibration at 12.5A and 50A
 #else
-#define DEFAULT_CURRENT_SCALE_FACTOR 35 // OpenEVSE v2.5 and v3 with a 22 Ohm burden resistor (note that the schematic may say 28 Ohms by mistake)
+#define DEFAULT_CURRENT_SCALE_FACTOR 35   // Calibrated for PROTO-V1R2
 #endif
 
 // subtract this from ammeter current reading to correct zero offset
 #ifdef OPENEVSE_2
 #define DEFAULT_AMMETER_CURRENT_OFFSET 230 // OpenEVSE II with a 27 Ohm burden resistor, after a 2-point calibration at 12.5A and 50A
 #else
-#define DEFAULT_AMMETER_CURRENT_OFFSET 75   // OpenEVSE v2.5 and v3 with a 22 Ohm burden resistor.  Could use a more thorough calibration exercise to nails this down.
+#define DEFAULT_AMMETER_CURRENT_OFFSET 75   // Calibrated for PROTO-V1R2
 #endif
 
 // The maximum number of milliseconds to sample an ammeter pin in order to find three zero-crossings.
