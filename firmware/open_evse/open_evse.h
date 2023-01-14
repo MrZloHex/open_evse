@@ -236,12 +236,12 @@ extern AutoCurrentCapacityController g_ACCController;
 //#define DEFAULT_LCD_BKL_TYPE BKL_TYPE_MONO
 
 // Adafruit LCD backpack in I2C mode (MCP23008)
-//#define I2CLCD
+#define I2CLCD
 
 // Support PCF8574* based I2C backpack using F. Malpartida's library
 // https://bitbucket.org/fmalpartida/new-liquidcrystal/downloads
 // *requires* I2CLCD enabled and RGBLCD disabled
-//#define I2CLCD_PCF8574
+#define I2CLCD_PCF8574
 #ifdef I2CLCD_PCF8574
 #define I2CLCD
 #undef RGBLCD
@@ -322,8 +322,15 @@ extern AutoCurrentCapacityController g_ACCController;
 //#define AUTH_LOCK_IDX 2
 #endif // AUTH_LOCK
 
+// #define ENABLE_AUTH_LOCK
+
+#ifdef ENABLE_AUTH_LOCK
 #define AUTH_LOCK 0
 #undef AUTH_LOCK_REG
+#else
+#undef AUTH_LOCK
+#undef AUTH_LOCK_REG
+#endif
 
 
 // for stability testing - shorter timeout/higher retry count
