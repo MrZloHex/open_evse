@@ -322,8 +322,8 @@ extern AutoCurrentCapacityController g_ACCController;
 // manual function calls
 // digital pin is configured as input with internal pull-up enabled
 // EVSE is locked when input HIGH and unlocked when input LOW
-//#define AUTH_LOCK_REG &PINC
-//#define AUTH_LOCK_IDX 2
+#define AUTH_LOCK_REG &PINC
+#define AUTH_LOCK_IDX 2
 #endif // AUTH_LOCK
 
 // #define ENABLE_AUTH_LOCK
@@ -332,8 +332,8 @@ extern AutoCurrentCapacityController g_ACCController;
 #define AUTH_LOCK 0
 #undef AUTH_LOCK_REG
 #else
-#undef AUTH_LOCK
-#undef AUTH_LOCK_REG
+// #undef AUTH_LOCK
+// #undef AUTH_LOCK_REG
 #endif
 
 

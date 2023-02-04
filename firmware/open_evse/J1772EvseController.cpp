@@ -24,9 +24,12 @@
 int g_CycleCnt = -1;
 long g_CycleHalfStart;
 uint8_t g_CycleState;
-#endif
+#endif    
+
 
 //                                               A/B B/C C/D D DS
+// AUTH_LOCK
+
 THRESH_DATA J1772EVSEController::m_ThreshData = {875,780,690,0,260};
 
 J1772EVSEController g_EvseController;
@@ -1464,7 +1467,7 @@ if (TempChkEnabled()) {
       tmpevsestate = EVSE_STATE_B;
       tmppilotstate = EVSE_STATE_B;
     }
-    else if (phigh  >= m_ThreshData.m_ThreshCD) {
+    else if (phigh  >= m_ThreshData.m_ThreshCD /* HUY */) {
       // 6V ready to charge
       tmppilotstate = EVSE_STATE_C;
       if (m_Pilot.GetState() == PILOT_STATE_PWM) {
@@ -1565,9 +1568,11 @@ if (TempChkEnabled()) {
 #ifdef AUTH_LOCK
 #ifdef AUTH_LOCK_REG
   {
-    int8_t locked;
-    if (pinAuthLock.read()) locked = 1;
-    else locked = 0;
+    static int8_t locked = 1;
+    if (!pinAuthLock.read()) 
+    {
+      locked = 0;
+    }
 
     if (m_EvseState == EVSE_STATE_A) {
       // ignore the pin, and always lock in STATE_A
