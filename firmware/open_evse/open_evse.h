@@ -332,7 +332,8 @@ extern AutoCurrentCapacityController g_ACCController;
 //#define AUTH_LOCK_IDX 2
 #endif // AUTH_LOCK
 
-// #define ENABLE_AUTH_LOCK
+#define ENABLE_AUTH_LOCK
+#define RAPI_MSG_DEL 30
 
 #ifdef ENABLE_AUTH_LOCK
 #define AUTH_LOCK 0
@@ -549,7 +550,7 @@ extern AutoCurrentCapacityController g_ACCController;
 
 
 
-#define SERIAL_BAUD 115200
+#define SERIAL_BAUD 9600
 
 // EEPROM offsets for settings
 #define EOFS_CURRENT_CAPACITY_L1 0 // 1 byte

@@ -1037,6 +1037,7 @@ void J1772EVSEController::Init()
 #endif
 
   m_wVFlags = ECVF_DEFAULT;
+  m_wVFlags |= ECVF_AUTH_LOCKED;
 
   m_MaxHwCurrentCapacity = eeprom_read_byte((uint8_t*)EOFS_MAX_HW_CURRENT_CAPACITY);
   if (!m_MaxHwCurrentCapacity || (m_MaxHwCurrentCapacity == (uint8_t)0xff)) {

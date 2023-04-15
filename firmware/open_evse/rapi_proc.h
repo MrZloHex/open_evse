@@ -442,7 +442,15 @@ class EvseSerialRapiProcessor : public EvseRapiProcessor {
   int available() { return Serial.available(); }
   int read() { return Serial.read(); }
   int write(uint8_t u8) { return Serial.write(u8); }
-  int write(const char *str) { return Serial.write(str); }
+  int write(const char *str)
+  {
+    if (last_send + RAPI_MSG_DEL > millis())
+      return -1;
+
+    last_send = millis();
+    return Serial.write(str); 
+  }
+  uint32_t last_send = 0;
 
 public:
   EvseSerialRapiProcessor();

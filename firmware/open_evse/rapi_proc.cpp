@@ -1102,14 +1102,16 @@ uint8_t RapiSendEvseState(uint8_t force)
     uint8_t currentCapacity = g_EvseController.GetCurrentCapacity();
     uint16_t vFlags = g_EvseController.GetVFlags() & ECVF_CHANGED_TEST;
     if (force ||
-	((evseState != EVSE_STATE_UNKNOWN) && 
-	 !((evseState == EVSE_STATE_A) && (vFlags & ECVF_EV_CONNECTED)) &&
-	 !((evseState == EVSE_STATE_B) && !(vFlags & ECVF_EV_CONNECTED)) &&
-	 !((evseState == EVSE_STATE_C) && !(vFlags & ECVF_EV_CONNECTED)) &&
-	 ((evseStateSent != evseState) ||
-	  (pilotStateSent != pilotState) ||
-	  (currentCapacitySent != currentCapacity) ||
-	  (vFlagsSent != vFlags)))) {
+	      ((evseState != EVSE_STATE_UNKNOWN) && 
+	      !((evseState == EVSE_STATE_A) && (vFlags & ECVF_EV_CONNECTED)) &&
+	      !((evseState == EVSE_STATE_B) && !(vFlags & ECVF_EV_CONNECTED)) &&
+	      !((evseState == EVSE_STATE_C) && !(vFlags & ECVF_EV_CONNECTED)) &&
+	      ((evseStateSent != evseState) ||
+	       (pilotStateSent != pilotState) ||
+	       (currentCapacitySent != currentCapacity)
+        ||(vFlagsSent != vFlags)
+        ))) 
+    {
 #ifdef RAPI_SERIAL
       g_ESRP.sendEvseState();
 #endif
