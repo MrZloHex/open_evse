@@ -65,7 +65,7 @@ void J1772EVSEController::readAmmeter()
   }
   // ran out of time. Assume that it's simply not oscillating any.
   m_AmmeterReading = (uint32_t)peak;
-  // Serial.println(peak);
+  Serial.println(peak);
 }
 
 #define MA_PTS 32 // # points in moving average MUST BE power of 2
@@ -1227,7 +1227,7 @@ void J1772EVSEController::Update(uint8_t forcetransition)
       //    allow 3A slop for ammeter inaccuracy
 #ifdef AMMETER
       readAmmeter();
-      long instantma = m_AmmeterReading*m_CurrentScaleFactor + m_AmmeterCurrentOffset;
+      long instantma = (m_AmmeterReading* DEFAULT_CURRENT_SCALE_FACTOR + DEFAULT_AMMETER_CURRENT_OFFSET) / 1000;
       if (instantma < 0) instantma = 0;
 #endif // AMMETER
       if ((phigh >= m_ThreshData.m_ThreshBC)
@@ -1781,7 +1781,9 @@ if (TempChkEnabled()) {
     readAmmeter();
     uint32_t ma = m_AmmeterReading;
     if (ma != 0xffffffff) {
-      m_ChargingCurrent = ma * m_CurrentScaleFactor + m_AmmeterCurrentOffset;  // subtract it
+      m_ChargingCurrent = (ma * DEFAULT_CURRENT_SCALE_FACTOR + DEFAULT_AMMETER_CURRENT_OFFSET) / 1000;  // subtract it
+      Serial.print("MA ");
+      Serial.println(m_ChargingCurrent);
       if (m_ChargingCurrent < 0) {
 	m_ChargingCurrent = 0;
       }

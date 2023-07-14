@@ -263,8 +263,8 @@ class J1772EVSEController {
 #ifdef AMMETER
   unsigned long m_AmmeterReading;
   int32_t m_ChargingCurrent;
-  int16_t m_AmmeterCurrentOffset;
-  int16_t m_CurrentScaleFactor;
+  int32_t m_AmmeterCurrentOffset;
+  int32_t m_CurrentScaleFactor;
 #ifdef CHARGE_LIMIT
   uint8_t m_chargeLimitkWh; // kWh to extend session
   uint32_t m_chargeLimitTotWs; // total Ws limit
